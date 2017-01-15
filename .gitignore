@@ -1,0 +1,90 @@
+//UNIVERSIDAD TECNICA DEL NORTE
+// SISTEMAS MICROPROCESADOS 
+// Nombre : Edwin Lema Vega 
+// DEBER LCD CON INTERUPCIONES
+#include<LiquidCrystal.h>
+LiquidCrystal lcd(9,8,7,6,5,4);
+char nombre[6]={'M','I','C','R','O','S'};
+int i=0;
+int j=0;
+int tamano;
+String dato;
+String cont;
+volatile int estado=0;
+volatile int estado1=0;
+
+void setup() {
+  // put your setup code here, to run once:
+  lcd.begin(16,2);
+  Serial.begin(9600);
+  attachInterrupt(digitalPinToInterrupt(2),encender,LOW);
+  attachInterrupt(digitalPinToInterrupt(3),play,LOW);
+}
+void encender(){
+  estado = 1 - estado;
+  }
+void play(){
+  estado1 = 1 - estado1;
+  }
+void loop() {
+if(estado == 1){
+    lcd.setCursor(0, 1);
+    lcd.print("ENCENDIDO");
+    delay(3000);
+    Serial.println("SELECCIONE JUEGO");
+    delay(3000);
+    if (estado1 == 1) {
+      lcd.setCursor(9,1);
+     lcd.print("JUEGO 1");
+     Serial.println("INGRESE PALABRA");
+    delay(3000);
+     cont=Serial.readString();
+      juego2(cont);
+      Serial.println("");
+    }
+    else {
+      lcd.setCursor(9, 1);
+      lcd.print("JUEGO 2");
+      Serial.println("INGRESE PALABRA");
+      delay(4000);
+      cont = Serial.readString();
+      juego1(cont);
+      Serial.println("");
+    }
+  }
+else {
+    lcd.clear();
+  }
+}
+
+void juego1(String datos) {
+  tamano = datos.length();
+  char vector[tamano + 1];
+  datos.toCharArray(vector, tamano + 1);
+  for (; j < tamano; j++) {
+    lcd.setCursor(j, 0);
+    lcd.print(vector[j]);
+    delay(200);
+  }
+  for (; j >= 0; j--) {
+    lcd.setCursor(j, 0);
+    lcd.print(' ');
+    delay(200);
+   }
+}
+
+void juego2(String dato) {
+  tamano = dato.length();
+  char vector[tamano + 1];
+  dato.toCharArray(vector, tamano + 1);
+  for (; j < tamano; j++) {
+    lcd.setCursor(j, 0);
+    lcd.print(vector[j]);
+    delay(200);
+  }
+    for (; i >= 0; i--) {
+    lcd.setCursor(i, 0);
+    lcd.print(' ');
+  }
+  j = 0;
+}
